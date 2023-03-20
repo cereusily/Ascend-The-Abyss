@@ -6,6 +6,7 @@ final int GAMEOVER = 4;
 int mode;
   
 GameManager gm;
+SceneManager sm;
 Player player;
 
 
@@ -16,32 +17,24 @@ void setup() {
   
   // Init assets
   gm = new GameManager();
-  
-  // Gameobjects
-  player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(70, 70));
-  gm.objectGroup.add(player);
-  
-  // Test enemies
-  gm.spawnEnemy(new PVector(width/2, height/2), new PVector(), 2, 1);
-  gm.spawnEnemy(new PVector(width/2, height/2), new PVector(), 2, 2);
-  gm.spawnEnemy(new PVector(width/2, height/2), new PVector(), 3, 1);
-  gm.spawnEnemy(new PVector(width/2, height/2), new PVector(), 3, 2);
-  
 }
 
 void draw() {
-  // Clear
-  background(255);
-
-  // Game manager
-  gm.drawRoom();
-  
-  gm.drawHUD();
-  
-  gm.checkEvents();
-  
-  gm.drawObjects(); 
-  
+  // Game states
+  switch (mode) {
+    case INTRO:
+      gm.intro();
+      break;
+    case GAME:
+      gm.runGame();
+      break;
+    case PAUSE:
+      gm.pause();
+      break;
+    case GAMEOVER:
+      gm.gameOver();
+      break;
+  }
 }
 
 void keyPressed() {

@@ -24,7 +24,7 @@ abstract class Gun {
       Bullet newBullet = new Bullet(this.pos, this.vel, this.size);
       newBullet.power = this.power;
       newBullet.setOmen(omen);
-      gm.objectGroup.add(newBullet);
+      gm.room.addToRoom(newBullet);
     }
   }
   

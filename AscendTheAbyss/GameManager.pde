@@ -1,49 +1,193 @@
 class GameManager {
   // Class that manages game conditions and settings
   
-  // Player movement
+  // Settings: Utility managers
+  RoomManager room;
+  
+  // Settings: Player movement
   boolean moveUp, moveDown, moveLeft, moveRight;
   
-  // Map
+  // Settings: Map
   PImage map;
+  boolean doorsLocked;
   color northRoom, eastRoom, southRoom, westRoom;
   
+  // Settings: Room colours
+  int startRoomX;
+  int startRoomY;
+  color WALL = #FFFFFF;
+  color ROOM = #000000;
+  color ENEMY_ROOM = #FF0000;
+  color ELITE_ROOM = #0000FF;
+  
+  // Settings: sprite sizes
+  int playerSize;
+  int enemySize;
+  
+  // Settings: Items
+  int itemSpriteSize;
+  HashMap<String, Item> itemsList;
+  
+  // Settings: objects
   ArrayList<GameObject> objectGroup;
   
   GameManager() {
+    // Managers
+    room = new RoomManager();
+    
+    // Settings
+    startRoomX = 1;
+    startRoomY = 4;
+    
+    playerSize = 70;
+    enemySize = 50;
+    itemSpriteSize = 30;
+    
     // All game objects
     objectGroup = new ArrayList<GameObject>();
+    itemsList = new HashMap<String, Item>();
     
     // Level map
-    map = loadImage("map.png");
+    map = loadImage("map3.png");
+    
+    // Set mode
+    mode = INTRO;
+    
+    // resets game
+    resetGame();
   }
   
-  void initAssets() {
-    // Init assets
+  /*
+  =======================
+  <---- Game States ---->
+  =======================
+  */
+  
+  void intro() {
+    // Plays intro => temp stand in
+    background(0);
+    textSize(100);
+    textAlign(CENTER);
+    fill(255);
+    text("ASCEND THE ABYSS", width/2, height/2);
+    textSize(45);
+    text("CLICK ANYWHERE TO START", width/2, height/2 + 70);
+    
+    if (mousePressed && mode == INTRO) {
+      resetGame();
+      mode = GAME;
+    }
+  }
+  
+  void runGame() {
+    // Runs main game loop
+    
+    // Event listener
+    checkEvents(); 
+    
+    // Gameplay
+    drawRoom();
+    room.drawObjects();
+    checkDoors();
+    
+    // UI
+    drawHUD();
+  }
+  
+  void pause() {
+    //
+  }
+  
+  void gameOver() {
+    // Plays gameover => temp stand in
+    background(0);
+    textSize(100);
+    textAlign(CENTER);
+    fill(255);
+    text("GAMEOVER", width/2, height/2);
+    textSize(45);
+    text("CLICK ANYWHERE TO RESTART", width/2, height/2 + 70);
+    
+    if (mousePressed && mode == GAMEOVER) {
+      mode = INTRO;
+    }
+  }
+  
+  /*
+  ============================
+  <---- Helper Functions ---->
+  ============================
+  */
+    
+  void fillLevel() {
+    // Loads enemies from map
+    for (int i = 0; i < map.height; i++) {
+      for (int j = 0; j < map.width; j++) {
+        color room = map.get(j, i);
+        
+        // Room configurations
+        if (room == ENEMY_ROOM) {
+          spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
+        }
+        if (room == ELITE_ROOM) {
+          spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
+          spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+        }
+      }
+    }  
+  }
+  
+  void checkDoors() {
+    // Locks the doors if in elite room => going to add conditions for bosses
+    if (room.getAliveEnemiesCount() > 1) {
+      doorsLocked = true;
+    }
+    if (room.getAliveEnemiesCount() == 0) {
+      doorsLocked = false;
+    }
+  }
+  
+  void resetGame() {
+    // Resets game
+    objectGroup.clear();
+    room.clearAll();
+    
+    // Gameobjects
+    player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(playerSize, playerSize), startRoomX, startRoomY);
+    objectGroup.add(player);
+    
+    // Populates level from map
+    fillLevel();
+    
+    // Fills room
+    fillRoom();
   }
   
   void spawnEnemy(PVector pos, PVector vel, int roomX, int roomY) {
     // Spawns in enemy
-    Enemy newEnemy = new Enemy(pos, vel, new PVector(50, 50));
-    newEnemy.roomX = roomX;
-    newEnemy.roomY = roomY;
-    
+    Enemy newEnemy = new Enemy(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
     objectGroup.add(newEnemy);
   }
   
-  void drawObjects() {
-    // Draws and updates all game objects
-    for (int i = 0; i < objectGroup.size(); i++) {
+  void spawnStalker(PVector pos, PVector vel, int roomX, int roomY) {
+    // Spawns stalker enemy
+    Stalker newStalker = new Stalker(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
+    objectGroup.add(newStalker);
+  }
+
+  
+  void fillRoom() {
+    // Clear room objects
+    room.clearAll();
+    
+    // Draws and updates all game objects   
+    for (int i = 0; i < objectGroup.size(); i++) {      
       GameObject obj = objectGroup.get(i);
       
       // Only updates and draws if same room as player
       if (obj.roomX == player.roomX && obj.roomY == player.roomY) {
-        obj.update();
-        obj.drawMe();
-      }
- 
-      if (obj.health <= 0) {
-        objectGroup.remove(i);
+        room.addToRoom(obj);
       }
     }
   }
@@ -67,17 +211,24 @@ class GameManager {
     
     // Draws doors where exits are located
     noStroke();
-    fill(0);
-    if (northRoom != #FFFFFF) {
+    
+    if (!doorsLocked) {
+      fill(0);
+    }
+    else {
+      fill(100);
+    }
+    
+    if (northRoom != WALL) {
       ellipse(width/2, height * 0.1, 100, 100);
     }
-    if (eastRoom != #FFFFFF) {
+    if (eastRoom != WALL) {
       ellipse(width * 0.9, height/2, 100, 100);
     }
-    if (southRoom != #FFFFFF) {
+    if (southRoom != WALL) {
       ellipse(width/2, height * 0.9, 100, 100);
     }
-    if (westRoom != #FFFFFF) {
+    if (westRoom != WALL) {
       ellipse(width * 0.1, height/2, 100, 100);
     }
     
@@ -99,6 +250,7 @@ class GameManager {
     
     push();
     rectMode(CENTER);
+    noStroke();
     translate(width-200, 30);
     
     // Loops through map img and replaces pixel for player location
@@ -109,7 +261,12 @@ class GameManager {
         }
         else {
           color c = map.get(j, i);  // replaces pixel with original colour
-          fill(c, 200);
+          if (c == WALL) {
+            fill(c, 10);  // Reduces wall opacity on map
+          }
+          else {
+            fill(c, 200);  // Currently replaces with colour => can turn to image
+          }
         }
         rect(j * miniMapRes, i * miniMapRes, miniMapRes, miniMapRes);  // draws mini map
       }
@@ -152,6 +309,9 @@ class GameManager {
       if (key == 's' || key == 'S') moveDown = true;
       if (key == 'a' || key == 'A') moveLeft = true;
       if (key == 'd' || key == 'D') moveRight = true;
+      if (key == 'e' || key == 'E' && player.switchCooldown == player.switchThreshold) {
+        player.switchOmen();
+      }
     }
   }
   

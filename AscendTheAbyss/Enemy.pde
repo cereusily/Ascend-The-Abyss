@@ -1,22 +1,37 @@
 class Enemy extends GameObject {
   // Class that manages enemy
   
-  Enemy(PVector pos, PVector vel, PVector size) {
-    super(pos, vel, size);
+  Enemy(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
+    super(pos, vel, size, roomX, roomY);
     
+    maxHealth = 5;
     health = 5;
     omen = "BLACK";
+  
   }
   
   void update() {
     super.update();
     bulletCheck();
+    
+    // Makes player invincible if enemies hit
+    if (hitObject(player) && !player.isInvincible) {
+      player.gotHit(1);
+    }
+    
+    // Drops items when dies
+    if (health <= 0) {
+      Item tempItem = new Item(new PVector(pos.x, pos.y), roomX, roomY, "Pudding", "Mmm..pudding. I wonder how long it's been here?");
+      tempItem.type = 1;
+      gm.room.addToRoom(tempItem);
+      removeSelf();
+    }
   }
   
   void bulletCheck() {
     // Checks if hit by bullet
-    for (int i = 0; i < gm.objectGroup.size(); i++) {
-      GameObject obj = gm.objectGroup.get(i);
+    for (int i = 0; i < gm.room.group.size(); i++) {
+      GameObject obj = gm.room.group.get(i);
       if (obj instanceof Bullet && hitObject(obj)) {
         
         obj.removeSelf();

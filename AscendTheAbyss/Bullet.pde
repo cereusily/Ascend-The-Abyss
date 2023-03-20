@@ -6,12 +6,8 @@ class Bullet extends GameObject {
   int colourSize;
   
   Bullet(PVector pos, PVector vel, PVector size) {
-    super(pos, vel, size);
-    
-    // Locations confined in player room
-    roomX = player.roomX;
-    roomY = player.roomY;
-    
+    super(pos, vel, size, player.roomX, player.roomY); // Locations confined in player room
+
     health = 1;
     colourSize = 4;
   }
@@ -20,6 +16,10 @@ class Bullet extends GameObject {
     super.update();
     updateBulletColour();
     checkCollisions();
+    
+    if (roomX != player.roomX || roomY != player.roomY) {
+      removeSelf();
+    }
   }
   
   void drawMe() {
@@ -59,5 +59,4 @@ class Bullet extends GameObject {
     if (pos.y < height * 0.1) removeSelf();
     if (pos.y > height * 0.9) removeSelf();
   }
-  
 }

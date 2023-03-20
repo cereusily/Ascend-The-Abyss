@@ -4,7 +4,7 @@ class GameObject {
   // Default settings
   PVector pos, vel, size;
   PImage sprite;
-  int health, deathTimer;
+  int health, maxHealth, deathTimer;
   float scaleFactor, rotateFactor;
   
   // Locations
@@ -13,12 +13,13 @@ class GameObject {
   // Game settings
   String omen;
   
-  
-  GameObject(PVector pos, PVector vel, PVector size) {
+  GameObject(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     this.pos = pos;
     this.vel = vel;
     this.size = size;
-    
+    this.roomX = roomX;
+    this.roomY = roomY;
+      
     // Sets timer
     deathTimer = -1;
   }
@@ -72,7 +73,6 @@ class GameObject {
   
   void removeSelf() {
     gm.objectGroup.remove(this);
+    gm.room.group.remove(this);
   }
-  
-  
 }
