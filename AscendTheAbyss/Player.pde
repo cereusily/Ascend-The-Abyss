@@ -19,6 +19,7 @@ class Player extends GameObject {
   
   // Player gun
   Gun gun;
+  ArrayList<Bullet> bullets;
   
   Player(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
@@ -36,8 +37,9 @@ class Player extends GameObject {
     // Timer
     iTimer = new Timer();
     
-    // Gun
-    gun = new Pistol(this.pos, new PVector());
+    // Gun + Bullets
+    gun = new Pistol(this.pos, new PVector(), bullets);
+    bullets = new ArrayList<Bullet>();
     
     // Omen
     omen = "WHITE";
@@ -70,8 +72,7 @@ class Player extends GameObject {
     // Recharges gun
     gun.recharge();
     
-    // Checks collisions
-    checkCollisions();
+    // Check invincibility
     checkInvincible();
     
     // See if player is alive
@@ -83,6 +84,18 @@ class Player extends GameObject {
     if (!gm.doorsLocked) {
       checkExits();
     }    
+  }
+  
+  void updateProjectiles() {
+    // Updates bullets
+    for (int i = 0; i < bullets.size(); i++) {
+      Bullet bullet = bullets.get(i);
+      
+      bullet.update();
+      bullet.drawMe();
+      
+      
+    }
   }
   
   void gotHit(int dmg) {
@@ -129,13 +142,6 @@ class Player extends GameObject {
     gun.pos = this.pos;
   }
   
-  void checkCollisions() {
-    if (pos.x < width * 0.1) pos.x = width * 0.1;
-    if (pos.x > width * 0.9) pos.x = width * 0.9;
-    if (pos.y < height * 0.1) pos.y = height * 0.1;
-    if (pos.y > height * 0.9) pos.y = height * 0.9;
-  }
-  
   void switchOmen() {
     // Swaps states
     this.switchCooldown = 0;
@@ -146,6 +152,7 @@ class Player extends GameObject {
     // Draws in character => placeholder
     push();
     translate(pos.x, pos.y);
+    ellipseMode(CENTER);
     fill(255,182,193);
     if (isInvincible) {
       fill(flash);

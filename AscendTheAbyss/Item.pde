@@ -50,6 +50,7 @@ class Item extends GameObject {
   void drawMe() {
     push();
     translate(pos.x, pos.y);
+    ellipseMode(CENTER);
     fill(#FFFF00);
     ellipse(0, 0, size.x, size.y);
     pop();

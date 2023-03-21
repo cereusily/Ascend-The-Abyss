@@ -1,5 +1,6 @@
 class Enemy extends GameObject {
   // Class that manages enemy
+  float knockback;
   
   Enemy(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
@@ -7,6 +8,8 @@ class Enemy extends GameObject {
     maxHealth = 5;
     health = 5;
     omen = "BLACK";
+    
+    knockback = 10;
   
   }
   
@@ -21,18 +24,26 @@ class Enemy extends GameObject {
     
     // Drops items when dies
     if (health <= 0) {
-      Item tempItem = new Item(new PVector(pos.x, pos.y), roomX, roomY, "Pudding", "Mmm..pudding. I wonder how long it's been here?");
-      tempItem.type = 1;
-      gm.room.addToRoom(tempItem);
+      if (random(0, 10) < 1) {
+        Item tempItem = new Item(new PVector(pos.x, pos.y), roomX, roomY, "Pudding", "Mmm..pudding. I wonder how long it's been here?");
+        tempItem.type = 1;
+        gm.room.addToRoom(tempItem);
+      }   
       removeSelf();
     }
   }
   
+  
   void bulletCheck() {
     // Checks if hit by bullet
     for (int i = 0; i < gm.room.group.size(); i++) {
+      
       GameObject obj = gm.room.group.get(i);
+      
+      
       if (obj instanceof Bullet && hitObject(obj)) {
+        PVector knockBack = obj.vel.normalize().mult(knockback);  // Gets opposite direction
+        pos.add(knockBack);
         
         obj.removeSelf();
         
@@ -52,6 +63,7 @@ class Enemy extends GameObject {
     push();
     translate(pos.x, pos.y);
     fill(0, 255, 0);
+    ellipseMode(CENTER);
     ellipse(0, 0, size.x, size.y);
     fill(0);
     textSize(30);

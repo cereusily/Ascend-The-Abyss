@@ -5,13 +5,15 @@ abstract class Gun {
   float threshold;
   
   PVector pos, vel, size;
+  ArrayList<Bullet> bullets;
   
   float speed; 
   int power;
   
-  Gun(PVector pos, PVector vel) {
+  Gun(PVector pos, PVector vel, ArrayList<Bullet> bullets) {
     this.pos = pos;
     this.vel = vel;
+    this.bullets = bullets;
     
     // Default bullet size & power
     this.size = new PVector(15, 15);

@@ -19,8 +19,14 @@ class Stalker extends Enemy {
     }
     
     // Tracks player
-    vel = new PVector(player.pos.x - pos.x, player.pos.y - pos.y);
-    vel.setMag(speed);
+    if (hitObject(player)) {
+      vel = new PVector();
+    }
+    else {
+      vel = new PVector(player.pos.x - pos.x, player.pos.y - pos.y);
+      vel.setMag(speed);
+    }
+    
   }
   
   void drawMe() {
@@ -28,6 +34,7 @@ class Stalker extends Enemy {
     push();
     translate(pos.x, pos.y);
     fill(0, 0, 255);
+    ellipseMode(CENTER);
     ellipse(0, 0, size.x, size.y);
     fill(0);
     textSize(30);

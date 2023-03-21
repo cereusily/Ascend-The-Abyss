@@ -130,9 +130,11 @@ class GameManager {
           spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
         }
         if (room == ELITE_ROOM) {
-          spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
-          spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
-          spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
         }
       }
     }  
@@ -140,7 +142,7 @@ class GameManager {
   
   void checkDoors() {
     // Locks the doors if in elite room => going to add conditions for bosses
-    if (room.getAliveEnemiesCount() > 1) {
+    if (room.getAliveEnemiesCount() >= 1) {
       doorsLocked = true;
     }
     if (room.getAliveEnemiesCount() == 0) {
@@ -174,6 +176,12 @@ class GameManager {
     // Spawns stalker enemy
     Stalker newStalker = new Stalker(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
     objectGroup.add(newStalker);
+  }
+  
+  void spawnSummoner(PVector pos, PVector vel, int roomX, int roomY) {
+    // Spawns summoner enemy
+    Summoner newSummoner = new Summoner(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
+    objectGroup.add(newSummoner);
   }
 
   
@@ -219,6 +227,7 @@ class GameManager {
       fill(100);
     }
     
+    // Draws doors
     if (northRoom != WALL) {
       ellipse(width/2, height * 0.1, 100, 100);
     }
@@ -238,6 +247,12 @@ class GameManager {
     fill(160,82,45);
     rect(width/2, height/2, width * 0.8, height * 0.8);
   }
+  
+  /* 
+  ===================
+  <---- UI/HUD ---->
+  ===================
+  */
   
   void drawHUD() {
     displayHealth();
@@ -284,6 +299,7 @@ class GameManager {
     }
     pop();
   }
+   
   
   void checkKeyPressed() {
     // Checks keys pressed

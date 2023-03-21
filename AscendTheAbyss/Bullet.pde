@@ -26,6 +26,7 @@ class Bullet extends GameObject {
     // Colours
     push();
     translate(pos.x, pos.y);
+    ellipseMode(CENTER);
     
     stroke(bulletOuterColour);
     strokeWeight(colourSize);

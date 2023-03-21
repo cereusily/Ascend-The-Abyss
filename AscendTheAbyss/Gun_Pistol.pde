@@ -2,8 +2,8 @@ class Pistol extends Gun {
   // Init fields
 
   
-  Pistol(PVector pos, PVector vel) {
-    super(pos, vel);
+  Pistol(PVector pos, PVector vel, ArrayList<Bullet> bullets) {
+    super(pos, vel, bullets);
     
     // Size init; power is default =1 
     this.size = new PVector(30, 30);

@@ -9,6 +9,8 @@ GameManager gm;
 SceneManager sm;
 Player player;
 
+// TODO LIST
+// Roommanager has check in drawall for enemies=> need to fix so enemies dont stack/iverlaps
 
 void setup() {
   // Sets up game
