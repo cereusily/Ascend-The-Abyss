@@ -7,6 +7,9 @@ class GameObject {
   PImage sprite;
   int health, maxHealth, deathTimer;
   float scaleFactor, rotateFactor;
+
+  int power;
+  boolean isFriendly;
   
   // Locations
   int roomX, roomY;
@@ -69,14 +72,8 @@ class GameObject {
     pos.add(knockback);
   }
   
-  boolean hitObject(GameObject other) {
-    // Checks if character got hit
-    boolean hit = false;
-    
-    if (dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y) < this.size.x) {
-      hit = true;
-    }
-    return hit;
+  boolean hitObject(GameObject c) {
+    return (abs(pos.x - c.pos.x) < size.x/2 + c.size.x/2 && abs(pos.y - c.pos.y) < size.y/2 + c.size.x/2);
   }
     
   void checkCollisions() {

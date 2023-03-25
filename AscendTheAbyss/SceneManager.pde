@@ -1,5 +1,5 @@
 class SceneManager {
-  // Fields
+  // Class that manages cutscenes in the game
   
   SceneManager() {}
   

@@ -1,12 +1,7 @@
 class Stalker extends Enemy {
-  // Fields
-  float speed;
   
   Stalker(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
-    
-    // Sets stalker speed
-    speed = 4;
   }
   
   void update() {
@@ -16,8 +11,11 @@ class Stalker extends Enemy {
     // Slows down if at half health
     if (health < maxHealth/2) {
       speed = 2.5;
-    }
-    
+    }   
+    track();
+  }
+  
+  void track() {
     // Tracks player
     if (hitObject(player)) {
       vel = new PVector();
@@ -25,8 +23,7 @@ class Stalker extends Enemy {
     else {
       vel = new PVector(player.pos.x - pos.x, player.pos.y - pos.y);
       vel.setMag(speed);
-    }
-    
+    } 
   }
   
   void drawMe() {

@@ -2,10 +2,12 @@ class RoomManager {
   // Fields
  
   ArrayList<GameObject> group;
+  ArrayList<Item> rewards;
 
   RoomManager() {
     // Gameobjects in room
     group = new ArrayList<GameObject>();
+    rewards = new ArrayList<Item>();
   }
 
   void addToRoom(GameObject obj) {
@@ -14,6 +16,15 @@ class RoomManager {
 
   void clearAll() {
     group.clear();
+  }
+  
+  void addReward(Item item) {
+    rewards.add(item);
+  }
+
+  boolean isClear() {
+    // If no enemies left in room
+    return getAliveEnemiesCount() == 0;
   }
 
   int getAliveEnemiesCount() {
@@ -46,5 +57,4 @@ class RoomManager {
       }
     }
   }
-  
 }

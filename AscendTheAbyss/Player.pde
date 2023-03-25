@@ -19,7 +19,13 @@ class Player extends GameObject {
   
   // Player gun
   Gun gun;
-  ArrayList<Bullet> bullets;
+  int knockback;
+  
+  // Inventory
+  ArrayList<Item> inventory;
+  
+  // Has key
+  boolean hasKey;
   
   Player(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
@@ -27,6 +33,7 @@ class Player extends GameObject {
     // Dampenings
     acc = 8;
     damp = 0.77;
+    knockback = 10;
     
     // Accelerations
     upAcc = new PVector(0, -acc);
@@ -38,18 +45,30 @@ class Player extends GameObject {
     iTimer = new Timer();
     
     // Gun + Bullets
-    gun = new Pistol(this.pos, new PVector(), bullets);
-    bullets = new ArrayList<Bullet>();
+    gun = new Pistol(this.pos, new PVector());
+    gun.isFriendly = true;
+    gun.power = 20;
+    
+    // Inventory
+    inventory = new ArrayList<Item>();
+    
+    // Key
+    hasKey = false;
     
     // Omen
     omen = "WHITE";
     switchThreshold = 20;
+    
+    // Modes
+    isFriendly = true;
     
     // Settings
     maxHealth = 3;
     health = 3;
     isInvincible = false;
     iTime = 3_000;
+    
+    
   }
   
   void update() {
@@ -74,6 +93,7 @@ class Player extends GameObject {
     
     // Check invincibility
     checkInvincible();
+    checkBullet();
     
     // See if player is alive
     if (health <= 0) {
@@ -81,21 +101,9 @@ class Player extends GameObject {
     }
     
     // Checks exits
-    if (!gm.doorsLocked) {
+    if (!gm.allDoorsLocked()) {
       checkExits();
     }    
-  }
-  
-  void updateProjectiles() {
-    // Updates bullets
-    for (int i = 0; i < bullets.size(); i++) {
-      Bullet bullet = bullets.get(i);
-      
-      bullet.update();
-      bullet.drawMe();
-      
-      
-    }
   }
   
   void gotHit(int dmg) {
@@ -112,34 +120,89 @@ class Player extends GameObject {
     }
   }
   
+  boolean hasBossKey() {
+    //
+    return hasKey;
+  }
+  
+
+  void checkBullet() {
+    // Checks if hit by bullet
+    for (int i = 0; i < gm.room.group.size(); i++) {
+      
+      GameObject obj = gm.room.group.get(i);
+      
+      // Checks if obj is a bullet
+      if (obj instanceof Bullet && hitObject(obj) && !obj.isFriendly) {
+        PVector knockBack = obj.vel.normalize().mult(knockback);  // Gets opposite direction
+        pos.add(knockBack);
+        
+        obj.removeSelf();
+        
+        // Checks if opposing omen
+        if (obj.omen != this.omen) {
+          decreaseHealth(obj.power * 2);
+        }
+        else {
+          decreaseHealth(obj.power);
+        }
+      }
+    }
+  }
+    
   void checkExits() {
     // Checks if exit exists, adjacent pixel is black
+    if (!gm.northDoorLocked) {
+      checkNorthExit();
+    }
+    if (!gm.eastDoorLocked) {
+      checkEastExit();
+    }
+    if (!gm.southDoorLocked) {
+      checkSouthExit();
+    }
+    if (!gm.westDoorLocked) {
+      checkWestExit();
+    }
+    
+    // Moves gun with player
+    gun.pos = this.pos;
+  }
+  
+  void checkNorthExit() {
     // North room => up
     if (gm.northRoom != gm.WALL && pos.y == height * 0.1 && pos.x >= width/2 - size.x/2 && pos.x <= width/2 + size.x/2) {
       roomY--;  // => moves up
       pos = new PVector(width/2, height * 0.9 - 10);
       gm.fillRoom();
     }
+  }
+  
+  void checkEastExit() {
     // east room => right
     if (gm.eastRoom != gm.WALL && pos.x == width * 0.9 && pos.y >= height/2 - size.y/2 && pos.y <= height/2 + size.y/2) {
       roomX++;
       pos = new PVector(width * 0.1 + 10, height/2);
       gm.fillRoom();
     }
+  }
+  
+  void checkSouthExit() {
     // south room => down
     if (gm.southRoom != gm.WALL && pos.y == height * 0.9 && pos.x >= width/2 - size.x/2 && pos.x <= width/2 + size.x/2) {
       roomY++;
       pos = new PVector(width/2, height * 0.1 + 10);
       gm.fillRoom();
     }
+  }
+  
+  void checkWestExit() {
     // west room => left
     if (gm.westRoom != gm.WALL && pos.x == width * 0.1 && pos.y >= height/2 - size.y/2 && pos.y <= height/2 + size.y/2) {
       roomX--;
       pos = new PVector(width * 0.9 - 10, height/2);
       gm.fillRoom();
     }
-    // Moves gun with player
-    gun.pos = this.pos;
   }
   
   void switchOmen() {

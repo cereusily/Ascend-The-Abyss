@@ -1,9 +1,9 @@
 class Pistol extends Gun {
   // Init fields
-
   
-  Pistol(PVector pos, PVector vel, ArrayList<Bullet> bullets) {
-    super(pos, vel, bullets);
+  
+  Pistol(PVector pos, PVector vel) {
+    super(pos, vel);
     
     // Size init; power is default =1 
     this.size = new PVector(30, 30);
@@ -25,6 +25,7 @@ class Pistol extends Gun {
       
       // Adds bullet to gameobject array and sets omen
       Bullet newBullet = new Bullet(new PVector(pos.x, pos.y), aimVector, size);
+      newBullet.isFriendly = isFriendly;
       newBullet.setOmen(omen);
       gm.room.addToRoom(newBullet);
     }

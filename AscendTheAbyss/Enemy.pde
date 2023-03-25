@@ -1,38 +1,50 @@
 class Enemy extends GameObject {
   // Class that manages enemy
   float knockback;
+  float speed;
+  float itemOdds;
+  boolean hasKey;
   
   Enemy(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
     
     maxHealth = 5;
     health = 5;
+    isFriendly = false;
     omen = "BLACK";
-    
     knockback = 10;
-  
+    power = 1;
+    speed = 4;
+    
+    itemOdds = 10; //  itemOdds/100 chance of itemdrop; i.e. 10% chance of drop
   }
   
   void update() {
     super.update();
     bulletCheck();
     
-    // Makes player invincible if enemies hit
-    if (hitObject(player) && !player.isInvincible) {
-      player.gotHit(1);
-    }
+    checkHitPlayer();
     
     // Drops items when dies
     if (health <= 0) {
-      if (random(0, 10) < 1) {
-        Item tempItem = new Item(new PVector(pos.x, pos.y), roomX, roomY, "Pudding", "Mmm..pudding. I wonder how long it's been here?");
-        tempItem.type = 1;
-        gm.room.addToRoom(tempItem);
+      if ((int)random(0, 100) <= itemOdds) {  // gets oods
+        spawnItem();
       }   
       removeSelf();
     }
   }
   
+  void checkHitPlayer() {
+    // Makes player invincible if enemies hit
+    if (hitObject(player) && !player.isInvincible) {
+      player.gotHit(power);
+    }
+  }
+  
+  void spawnItem() {
+    // Spawns item into room
+    gm.room.addToRoom(gm.spawnPudding(new PVector(pos.x, pos.y), roomX, roomY));
+  }
   
   void bulletCheck() {
     // Checks if hit by bullet
@@ -41,7 +53,7 @@ class Enemy extends GameObject {
       GameObject obj = gm.room.group.get(i);
       
       
-      if (obj instanceof Bullet && hitObject(obj)) {
+      if (obj instanceof Bullet && hitObject(obj) && obj.isFriendly) {
         PVector knockBack = obj.vel.normalize().mult(knockback);  // Gets opposite direction
         pos.add(knockBack);
         

@@ -8,15 +8,17 @@ class Summoner extends Enemy {
   
   int dir;
   float angle;
-  float speed;
   
   Summoner(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
     // Sets health
-    health = 15;
+    health = 10;
     
     // Sets threshold for summoning
-    summonMax = 12;
+    summonMax = 6;
+    
+    // Odds for itemdrop
+    itemOdds = 60;
     
     // Sets summon time
     summonCooldown = 0;

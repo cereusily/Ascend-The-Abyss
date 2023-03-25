@@ -1,9 +1,5 @@
 class Item extends GameObject {
   // Class that manages items
-  final int MONEY = 0;
-  final int CONSUMABLE = 1;
-  final int RELIC = 2;
-  final int GUN = 3;
   
   int type;
   Gun gun;
@@ -21,6 +17,7 @@ class Item extends GameObject {
     
     // Health so item doesn't despawn
     health = 1;
+    isFriendly = true;
   }
   
   void update() {
@@ -32,27 +29,73 @@ class Item extends GameObject {
         case MONEY:
           break;
         case CONSUMABLE:
-          player.health++;
+          pickUpHealth();
           break;
         case RELIC:
           break;
         case GUN:
           break;
+        case KEY:   
+          pickUpKey();
+          break;
       }
-      removeSelf();
+    }
+    
+    // Displays info if mouse is hovering
+    if (dist(mouseX, mouseY, pos.x, pos.y) < size.x/2) {
+      displayInfo();
     }
   }
   
-  boolean hitObject(GameObject c) {
-    return (abs(pos.x - c.pos.x) < size.x/2 + c.size.x/2 && abs(pos.y - c.pos.y) < size.y/2 + c.size.x/2);
+  void displayInfo() {
+    push();
+    translate(pos.x, pos.y + size.x);
+    textSize(12);
+    textAlign(CENTER);
+    fill(255);
+    text(name, 0, 0);
+    text(description, 0, 20);
+    pop();
   }
   
-  void drawMe() {
+  void pickUpHealth() {
+    player.health++;
+    removeSelf();
+  }
+  
+  void pickUpKey() {
+    // Function to manage adding key to player inventory
+    player.hasKey = true;
+    removeSelf();
+  }
+  
+  void displayMe() {
+    // Renders in the inventory
     push();
-    translate(pos.x, pos.y);
+    translate(50, 100);  // code here for inventory size
     ellipseMode(CENTER);
     fill(#FFFF00);
     ellipse(0, 0, size.x, size.y);
     pop();
+  }
+  
+  void drawMe() {
+    // Renders in game world
+    push();
+    translate(pos.x, pos.y);
+    
+    // If a sprite exists, draw the sprite
+    if (sprite != null) {
+      imageMode(CENTER);
+      image(sprite, 0, 0, size.x, size.y);
+    }
+    else {
+      ellipseMode(CENTER);
+      fill(#FFFF00);
+      ellipse(0, 0, size.x, size.y);
+    }   
+    pop();
   } 
+  
+  
 }

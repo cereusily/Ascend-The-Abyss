@@ -1,6 +1,5 @@
 class Bullet extends GameObject {
   // Fields
-  int power;
   color bulletInnerColour;
   color bulletOuterColour;
   int colourSize;
@@ -48,10 +47,6 @@ class Bullet extends GameObject {
         bulletInnerColour = color(20);
         break;
     } 
-  }
-  
-  boolean hitObject(GameObject c) {
-    return (abs(pos.x - c.pos.x) < size.x/2 + c.size.x/2 && abs(pos.y - c.pos.y) < size.y/2 + c.size.x/2);
   }
   
   void checkCollisions() {
