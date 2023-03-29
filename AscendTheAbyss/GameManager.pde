@@ -7,6 +7,9 @@ class GameManager {
   // Settings: Player movement
   boolean moveUp, moveDown, moveLeft, moveRight;
 
+  // Settings: Level
+  int currentLevel;
+
   // Settings: Map
   PImage map;
   boolean doorsLocked;
@@ -18,6 +21,7 @@ class GameManager {
   int startRoomY;
   color WALL = #FFFFFF;
   color ROOM = #000000;
+  color START_ROOM = #A020F0;
   color ENEMY_ROOM = #FF0000;
   color ELITE_ROOM = #0000FF;
   color KEY_ROOM = #FFFF00;
@@ -39,11 +43,13 @@ class GameManager {
   PImage playerSprite;
   PImage heartSprite;
   PImage emptyHeartSprite;
-  
-  
-  
+
   PImage puddingSprite;
   PImage bossKeySprite;
+
+  PImage skeletonSprite;
+  PImage summonerSprite;
+  PImage chestSprite;
 
   // Settings: objects
   ArrayList<GameObject> objectGroup;  // for objects stored globally on map; room group for object stored locally in room
@@ -53,34 +59,27 @@ class GameManager {
     room = new RoomManager();
 
     // Settings
-    startRoomX = 1;
-    startRoomY = 4;
-
-    playerSize = 50;
-    enemySize = 50;
+    playerSize = 70;
+    enemySize = 80;
     itemSpriteSize = 40;
-
-    keySpawned = false;
 
     // All game objects
     objectGroup = new ArrayList<GameObject>();
     itemsList = new HashMap<String, Item>();
 
-    // Level map
-    map = loadImage("map3.png");
-
     // Load images for sprites
-    playerProfile = new Animation("gothie-profile/pixel-gothie_", 81, 24, new PVector(130, 130));
-    playerSprite = loadImage("gothie-1.png");
+    playerProfile = new Animation("sprites/gothie-profile/pixel-gothie_", 14, 6, new PVector(130, 130));
+    playerSprite = loadImage("sprites/gothie-1.png");
 
-    heartSprite = loadImage("heart.png");
-    emptyHeartSprite = loadImage("empty-heart.png");
-    
-    puddingSprite = loadImage("pudding.png");
-    bossKeySprite = loadImage("bossKey.png");
+    heartSprite = loadImage("sprites/heart.png");
+    emptyHeartSprite = loadImage("sprites/empty-heart.png");
+
+    puddingSprite = loadImage("sprites/pudding.png");
+    bossKeySprite = loadImage("sprites/bossKey.png");
 
     // Set mode
     mode = INTRO;
+    currentLevel = 0;
 
     // resets game
     resetGame();
@@ -157,16 +156,28 @@ class GameManager {
         color r = map.get(j, i);
 
         // Room configurations
+        if (r == START_ROOM) {
+          startRoomX = j;
+          startRoomY = i;
+        }
+
         if (r == ENEMY_ROOM) {
           spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
           spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
           spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          spawnStalker(new PVector(width/2 - 100, height/2 + 150), new PVector(), j, i);
+          spawnStalker(new PVector(width/2 - 150, height/2), new PVector(), j, i);
+          spawnStalker(new PVector(width/2 - 100, height/2 - 150), new PVector(), j, i);
         }
         if (r == ELITE_ROOM) {
           spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
           spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
         }
         if (r == KEY_ROOM) {
+          spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
           spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
           spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
           spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
@@ -175,8 +186,13 @@ class GameManager {
         }
         if (r == BOSS_ROOM) {
           spawnChaser(new PVector(width/2, height/2), new PVector(), j, i);
-          spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 100, height/2 + 150), new PVector(), j, i);
           spawnSummoner(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 180, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 170, height/2 - 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 160, height/2 + 100), new PVector(), j, i);
+          spawnSummoner(new PVector(width/2 - 150, height/2 - 100), new PVector(), j, i);
+          spawnGoal(new PVector(width/2, height/2), new PVector(), j, i);
         }
       }
     }
@@ -216,13 +232,21 @@ class GameManager {
     objectGroup.clear();
     room.clearAll();
 
-    // Gameobjects
-    player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(playerSize, playerSize), startRoomX, startRoomY);
-    player.sprite = playerSprite;
-    objectGroup.add(player);
+    // Map
+    map = loadImage("map/map" + currentLevel + ".png");
+
+    // Keys
+    keySpawned = false;
 
     // Populates level from map
     fillLevel();
+
+    // Gameobjects
+    player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(playerSize, playerSize), startRoomX, startRoomY);
+    player.sprite = playerSprite;
+    player.hasKey = false;
+
+    objectGroup.add(player);
 
     // Fills room
     fillRoom();
@@ -260,6 +284,11 @@ class GameManager {
   void spawnChest(PVector pos, PVector vel, int roomX, int roomY) {
     Chest newChest = new Chest(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
     objectGroup.add(newChest);
+  }
+
+  void spawnGoal(PVector pos, PVector vel, int roomX, int roomY) {
+    GoalBlock newGoal = new GoalBlock(pos, vel, new PVector(50, 50), roomX, roomY);
+    objectGroup.add(newGoal);
   }
 
 

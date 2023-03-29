@@ -4,7 +4,7 @@ class Chest extends Enemy {
   Chest(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
     itemOdds = 100;
-    sprite = loadImage("chest.png");
+    sprite = loadImage("sprites/chest.png");
   }
 
   void update() {

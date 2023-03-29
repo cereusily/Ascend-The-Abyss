@@ -5,7 +5,7 @@ class Pistol extends Gun {
     super(pos, vel, arr);
     
     // Size init; power is default =1 
-    this.size = new PVector(30, 30);
+    this.size = new PVector(15, 15);
     
     speed = 10;
     

@@ -21,6 +21,8 @@ class Chaser extends Enemy {
     chargeThreshold = 300;
     chargeSpeed = 10;
     charging = false;
+    
+    sprite = loadImage("sprites/chaser.png");
 
     chaserState = TRACK;
   }
@@ -41,6 +43,15 @@ class Chaser extends Enemy {
         break;
     }
     abilityCooldown++;
+  }
+  
+  void drawMe() {
+    // Draws image
+    push();
+    translate(pos.x, pos.y);
+    imageMode(CENTER);
+    image(sprite, 0, 0, size.x, size.y); 
+    pop();
   }
   
   void track() {

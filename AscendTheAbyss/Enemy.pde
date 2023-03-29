@@ -14,9 +14,9 @@ class Enemy extends GameObject {
     omen = "BLACK";
     knockback = 10;
     power = 1;
-    speed = 4;
+    speed = 3;
     
-    sprite = loadImage("skeleton.png");
+    sprite = loadImage("sprites/skeleton.png");
     
     
     itemOdds = 10; //  itemOdds/100 chance of itemdrop; i.e. 10% chance of drop

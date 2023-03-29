@@ -1,12 +1,10 @@
 class RicochetBullet extends Bullet {
   // Fields
   int bounceCount;
-  int bounceMax;
+  int bounceMax = 1;
 
   RicochetBullet(PVector pos, PVector vel, PVector size, ArrayList<Bullet> arr) {
     super(pos, vel, size, arr);
-
-    bounceMax = 3;
   }
 
   void update() {
