@@ -45,15 +45,11 @@ class RoomManager {
     // Draws and updates all game objects
     for (int i = 0; i < group.size(); i++) {
       GameObject obj = group.get(i);
+      
       // Only updates and draws if same room as player
       if (obj.roomX == player.roomX && obj.roomY == player.roomY) {  // Only runs for loop for enemies
         obj.update();
         obj.drawMe();
-      } 
-      else {
-        if (obj instanceof Bullet) {  // Removes lingering bullets in rooms
-          group.remove(i);
-        }
       }
     }
   }

@@ -16,6 +16,9 @@ class Enemy extends GameObject {
     power = 1;
     speed = 4;
     
+    sprite = loadImage("skeleton.png");
+    
+    
     itemOdds = 10; //  itemOdds/100 chance of itemdrop; i.e. 10% chance of drop
   }
   
@@ -43,24 +46,26 @@ class Enemy extends GameObject {
   
   void spawnItem() {
     // Spawns item into room
-    gm.room.addToRoom(gm.spawnPudding(new PVector(pos.x, pos.y), roomX, roomY));
+    Item drop = gm.spawnPudding(new PVector(pos.x, pos.y), roomX, roomY);
+    gm.objectGroup.add(drop);
+    gm.room.addToRoom(drop);
   }
   
   void bulletCheck() {
     // Checks if hit by bullet
-    for (int i = 0; i < gm.room.group.size(); i++) {
+    for (int i = 0; i < player.playerBullets.size(); i++) {
       
-      GameObject obj = gm.room.group.get(i);
+      Bullet b = player.playerBullets.get(i);
       
       
-      if (obj instanceof Bullet && hitObject(obj) && obj.isFriendly) {
-        PVector knockBack = obj.vel.normalize().mult(knockback);  // Gets opposite direction
+      if (hitObject(b) && b.isFriendly) {
+        PVector knockBack = b.vel.normalize().mult(knockback);  // Gets opposite direction
         pos.add(knockBack);
         
-        obj.removeSelf();
+        b.resolveCollision(this);
         
         // Checks if opposing omen
-        if (obj.omen != this.omen) {
+        if (b.omen != this.omen) {
           decreaseHealth(player.gun.power * 2);
         }
         else {

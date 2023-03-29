@@ -38,6 +38,8 @@ class Item extends GameObject {
         case KEY:   
           pickUpKey();
           break;
+        case LEVEL_KEY:
+          break;
       }
     }
     
@@ -59,7 +61,9 @@ class Item extends GameObject {
   }
   
   void pickUpHealth() {
-    player.health++;
+    if (player.health < player.maxHealth) {
+      player.health++;
+    }
     removeSelf();
   }
   

@@ -5,15 +5,19 @@ abstract class Gun {
   float threshold;
   
   PVector pos, vel, size;
+  ArrayList<Bullet> arr;
   
   boolean isFriendly;
+  boolean canRicochet;
+  
   
   float speed; 
   int power;
   
-  Gun(PVector pos, PVector vel) {
+  Gun(PVector pos, PVector vel, ArrayList<Bullet> arr) {
     this.pos = pos;
     this.vel = vel;
+    this.arr = arr;
     
     // Default bullet size & power
     this.size = new PVector(15, 15);
@@ -23,11 +27,12 @@ abstract class Gun {
   void shoot(String omen) {
     // Shoots bullet is cooldown is off
     if (cooldown == threshold) {
-      Bullet newBullet = new Bullet(this.pos, this.vel, this.size);
+      Bullet newBullet = new Bullet(this.pos, this.vel, this.size, arr);
       newBullet.power = this.power;
       newBullet.isFriendly = isFriendly;
       newBullet.setOmen(omen);
-      gm.room.addToRoom(newBullet);
+      arr.add(newBullet);
+      //gm.room.addToRoom(newBullet);
     }
   }
   

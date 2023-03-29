@@ -1,16 +1,15 @@
 class Pistol extends Gun {
   // Init fields
   
-  
-  Pistol(PVector pos, PVector vel) {
-    super(pos, vel);
+  Pistol(PVector pos, PVector vel, ArrayList<Bullet> arr) {
+    super(pos, vel, arr);
     
     // Size init; power is default =1 
     this.size = new PVector(30, 30);
     
     speed = 10;
     
-    threshold = 25;
+    threshold = 40;
     cooldown = 25;
   }
 
@@ -23,11 +22,19 @@ class Pistol extends Gun {
       PVector aimVector =  new PVector(mouseX - player.pos.x, mouseY - player.pos.y);
       aimVector.setMag(speed);
       
-      // Adds bullet to gameobject array and sets omen
-      Bullet newBullet = new Bullet(new PVector(pos.x, pos.y), aimVector, size);
-      newBullet.isFriendly = isFriendly;
-      newBullet.setOmen(omen);
-      gm.room.addToRoom(newBullet);
+      if (canRicochet) {  // Ricochet bullet
+        Bullet newBullet = new RicochetBullet(new PVector(pos.x, pos.y), aimVector, size, arr);
+        newBullet.isFriendly = isFriendly;
+        newBullet.setOmen(omen);
+        arr.add(newBullet);
+      }
+      else {  // Regular bullet
+        Bullet newBullet = new Bullet(new PVector(pos.x, pos.y), aimVector, size, arr);
+        newBullet.isFriendly = isFriendly;
+        newBullet.setOmen(omen);
+        arr.add(newBullet);
+      }
     }
   }
+
 }

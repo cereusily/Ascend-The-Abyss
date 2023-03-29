@@ -14,6 +14,9 @@ class Summoner extends Enemy {
     // Sets health
     health = 10;
     
+    // sprite
+    sprite = loadImage("summoner.png");
+    
     // Sets threshold for summoning
     summonMax = 6;
     
@@ -51,13 +54,18 @@ class Summoner extends Enemy {
     // Draws summoner
     push();
     translate(pos.x, pos.y);
-    ellipseMode(CENTER);
-    fill(#FF00FF);
-    ellipse(0, 0, size.x, size.y);
-    fill(0);
-    textSize(30);
-    textAlign(CENTER);
-    text(health, 0, 10);
+    
+    image(sprite, 0, 0, size.x, size.y);
+    //ellipseMode(CENTER);
+    //fill(#FF00FF);
+    //ellipse(0, 0, size.x, size.y);
+    
+    //fill(0);
+    //textSize(30);
+    //textAlign(CENTER);
+    //text(health, 0, 10);
+    
+    
     pop();
   }
   

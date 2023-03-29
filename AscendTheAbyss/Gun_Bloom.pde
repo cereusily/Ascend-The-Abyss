@@ -1,8 +1,8 @@
 class Bloom extends Gun {
   // Init fields
   
-  Bloom(PVector pos, PVector vel) {
-    super(pos, vel);
+  Bloom(PVector pos, PVector vel, ArrayList<Bullet> arr) {
+    super(pos, vel, arr);
     
     // Size init; power is default =1 
     this.size = new PVector(30, 30);
@@ -20,7 +20,7 @@ class Bloom extends Gun {
       
       // While less than a circle
       while (angle <= TWO_PI) {
-        Bullet newBullet = new Bullet(new PVector(pos.x + sin(angle) * vel.x, pos.y + cos(angle) * vel.y), new PVector(sin(angle) * vel.x, cos(angle) * vel.y), size);
+        Bullet newBullet = new Bullet(new PVector(pos.x + sin(angle) * vel.x, pos.y + cos(angle) * vel.y), new PVector(sin(angle) * vel.x, cos(angle) * vel.y), size, arr);
         newBullet.setOmen(omen);
         newBullet.isFriendly = isFriendly;
         newBullet.power = this.power;

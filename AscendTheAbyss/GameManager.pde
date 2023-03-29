@@ -23,21 +23,30 @@ class GameManager {
   color KEY_ROOM = #FFFF00;
   color BOSS_ROOM = #FF00FF;
 
+  // Settings: animated sprite
+  Animation playerProfile;
+
   // Settings: sprite sizes
   int playerSize;
   int enemySize;
- 
+
   // Settings: Items
   int itemSpriteSize;
   HashMap<String, Item> itemsList;
   boolean keySpawned;
-  
+
   // Settings: Sprites
+  PImage playerSprite;
+  PImage heartSprite;
+  PImage emptyHeartSprite;
+  
+  
+  
   PImage puddingSprite;
   PImage bossKeySprite;
 
   // Settings: objects
-  ArrayList<GameObject> objectGroup;
+  ArrayList<GameObject> objectGroup;  // for objects stored globally on map; room group for object stored locally in room
 
   GameManager() {
     // Managers
@@ -47,10 +56,10 @@ class GameManager {
     startRoomX = 1;
     startRoomY = 4;
 
-    playerSize = 70;
+    playerSize = 50;
     enemySize = 50;
     itemSpriteSize = 40;
-    
+
     keySpawned = false;
 
     // All game objects
@@ -59,8 +68,14 @@ class GameManager {
 
     // Level map
     map = loadImage("map3.png");
-    
+
     // Load images for sprites
+    playerProfile = new Animation("gothie-profile/pixel-gothie_", 81, 24, new PVector(130, 130));
+    playerSprite = loadImage("gothie-1.png");
+
+    heartSprite = loadImage("heart.png");
+    emptyHeartSprite = loadImage("empty-heart.png");
+    
     puddingSprite = loadImage("pudding.png");
     bossKeySprite = loadImage("bossKey.png");
 
@@ -103,9 +118,11 @@ class GameManager {
     checkDoors();
     drawRoom();
     room.drawObjects();
-      
+
     // UI
     drawHUD();
+
+    playerProfile.display(0, 0);
   }
 
   void pause() {
@@ -164,7 +181,7 @@ class GameManager {
       }
     }
   }
-  
+
 
   void lockAllDoors() {
     northDoorLocked = true;
@@ -201,6 +218,7 @@ class GameManager {
 
     // Gameobjects
     player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(playerSize, playerSize), startRoomX, startRoomY);
+    player.sprite = playerSprite;
     objectGroup.add(player);
 
     // Populates level from map
@@ -230,7 +248,7 @@ class GameManager {
 
   void spawnSummoner(PVector pos, PVector vel, int roomX, int roomY) {
     // Spawns summoner enemy
-    Summoner newSummoner = new Summoner(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
+    Summoner newSummoner = new Summoner(pos, vel, new PVector(enemySize + 20, enemySize + 20), roomX, roomY);
     objectGroup.add(newSummoner);
   }
 
@@ -238,15 +256,12 @@ class GameManager {
     Chaser newChaser = new Chaser(pos, vel, new PVector(enemySize + 20, enemySize + 20), roomX, roomY);
     objectGroup.add(newChaser);
   }
-  
+
   void spawnChest(PVector pos, PVector vel, int roomX, int roomY) {
-    Chest newChest = new Chest(pos, vel, new PVector(enemySize, + 40, enemySize + 40), roomX, roomY);
+    Chest newChest = new Chest(pos, vel, new PVector(enemySize, enemySize), roomX, roomY);
     objectGroup.add(newChest);
   }
-  
-  
-  
-  
+
 
   /*
    ==========================
@@ -327,25 +342,23 @@ class GameManager {
     if (westRoom != WALL) {
       ellipse(width * 0.1, height/2, 100, 100);
     }
-    
+
+    // Checks for boss room
     if (northRoom == BOSS_ROOM) {
       if (player.hasBossKey()) {
         northDoorLocked = false;
         fill(0);
-      }
-      else {
+      } else {
         northDoorLocked = true;
         fill(BOSS_ROOM);
       }
       ellipse(width/2, height * 0.1, 100, 100);
     }
-    //checkBossRoom(eastRoom, eastDoorLocked);
     if (eastRoom == BOSS_ROOM) {
       if (player.hasBossKey()) {
         eastDoorLocked = false;
         fill(0);
-      }
-      else {
+      } else {
         eastDoorLocked = true;
         fill(BOSS_ROOM);
       }
@@ -355,8 +368,7 @@ class GameManager {
       if (player.hasBossKey()) {
         eastDoorLocked = false;
         fill(0);
-      }
-      else {
+      } else {
         southDoorLocked = true;
         fill(BOSS_ROOM);
       }
@@ -366,8 +378,7 @@ class GameManager {
       if (player.hasBossKey()) {
         westDoorLocked = false;
         fill(0);
-      }
-      else {
+      } else {
         westDoorLocked = true;
         fill(BOSS_ROOM);
       }
@@ -380,24 +391,9 @@ class GameManager {
     fill(160, 82, 45);
     rect(width/2, height/2, width * 0.8, height * 0.8);
   }
-  
-  void checkBossRoom(color room, boolean isLocked) {
-    // Checks boss room
-    if (room == BOSS_ROOM) {
-      if (player.hasBossKey()) {
-        isLocked = false;
-        fill(0);
-      }
-      else {
-        isLocked = true;
-        fill(BOSS_ROOM);
-      }
-      ellipse(width * 0.1, height/2, 100, 100);
-    }
-  }
 
   /*
-     ===================
+   ===================
    <---- UI/HUD ---->
    ===================
    */
@@ -439,10 +435,14 @@ class GameManager {
   void drawHealth() {
     // Draws player health
     push();
+    for (int i = 0; i < player.maxHealth; i++) {
+      imageMode(CENTER);
+      image(emptyHeartSprite, 180 + (i * 65), 60, 64, 64);
+    }
+
     for (int i = 0; i < player.health; i++) {
-      rectMode(CENTER);
-      fill(255, 0, 0);
-      rect(50 + (i * 60), 50, 50, 50);
+      imageMode(CENTER);
+      image(heartSprite, 180 + (i * 65), 60, 64, 64);
     }
     pop();
   }

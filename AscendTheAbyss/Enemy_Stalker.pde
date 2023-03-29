@@ -30,13 +30,20 @@ class Stalker extends Enemy {
     // => Place holder
     push();
     translate(pos.x, pos.y);
-    fill(0, 0, 255);
-    ellipseMode(CENTER);
-    ellipse(0, 0, size.x, size.y);
-    fill(0);
-    textSize(30);
-    textAlign(CENTER);
-    text(health, 0, 10);
+    
+    
+    //fill(0, 0, 255);
+    //ellipseMode(CENTER);
+    //ellipse(0, 0, size.x, size.y);
+    //fill(0);
+    
+    imageMode(CENTER);
+    image(sprite, 0, 0, size.x, size.y);
+    
+    
+    //textSize(30);
+    //textAlign(CENTER);
+    //text(health, 0, 10);
     pop();
   }
 }

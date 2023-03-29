@@ -4,6 +4,7 @@ class Chest extends Enemy {
   Chest(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
     itemOdds = 100;
+    sprite = loadImage("chest.png");
   }
 
   void update() {
@@ -15,13 +16,15 @@ class Chest extends Enemy {
         }
         removeSelf();
       }
+      bulletCheck();
     }
-    bulletCheck();
   }
 
   void spawnItem() {
     // Drops key
-    gm.room.addToRoom(gm.spawnBossKey(new PVector(pos.x, pos.y), roomX, roomY));
+    Item bossKey = gm.spawnBossKey(new PVector(pos.x, pos.y), roomX, roomY);
+    gm.objectGroup.add(bossKey);
+    gm.room.addToRoom(bossKey);
   }
 
   void drawMe() {
@@ -29,7 +32,9 @@ class Chest extends Enemy {
     if (gm.room.getAliveEnemiesCount() == 1) {
       push();
       translate(pos.x, pos.y);
-      ellipse(0, 0, size.x, size.y);
+      imageMode(CENTER);
+      image(sprite, 0, 0, size.x, size.y);
+      //ellipse(0, 0, size.x, size.y);
       pop();
     }
   }
