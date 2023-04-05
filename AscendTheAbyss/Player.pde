@@ -24,6 +24,9 @@ class Player extends GameObject {
 
   // Inventory
   ArrayList<Item> inventory;
+  
+  // Animated sprites
+  Animation frontWalk;
 
   // Has key
   boolean hasKey;
@@ -44,6 +47,9 @@ class Player extends GameObject {
 
     // Timer
     iTimer = new Timer();
+    
+    // Animations
+    frontWalk = new Animation("sprites/gothie-move-down/move-down-", 4, 10, size);
 
     // Gun + Bullets
     playerBullets = new ArrayList<Bullet>();
@@ -84,6 +90,7 @@ class Player extends GameObject {
 
     // Calls update
     super.update();
+    frontWalk.display(player.pos.x, player.pos.y);
     updateBullets();
 
     // Checks switching cooldown
@@ -231,17 +238,17 @@ class Player extends GameObject {
   }
 
   void drawMe() {
-    // Draws in character => placeholder
-    push();
-    translate(pos.x, pos.y);
-    ellipseMode(CENTER);
-    fill(255, 182, 193);
-    if (isInvincible) {
-      fill(flash);
-    }
-    //ellipse(0, 0, size.x, size.y);
-    imageMode(CENTER);
-    image(sprite, 0, 0, size.x + 10, size.y + size.y/2 + 10);
-    pop();
+    //// Draws in character => placeholder
+    //push();
+    //translate(pos.x, pos.y);
+    //ellipseMode(CENTER);
+    //fill(255, 182, 193);
+    //if (isInvincible) {
+    //  fill(flash);
+    //}
+    ////ellipse(0, 0, size.x, size.y);
+    //imageMode(CENTER);
+    //image(sprite, 0, 0, size.x + 10, size.y + size.y/2 + 10);
+    //pop();
   }
 }

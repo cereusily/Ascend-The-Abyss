@@ -2,6 +2,7 @@ class GoalBlock extends GameObject {
   // Fields
   GoalBlock(PVector pos, PVector vel, PVector size, int roomX, int roomY) {
     super(pos, vel, size, roomX, roomY);
+    sprite = loadImage("sprites/goal.png");
   }
 
   void update() {
@@ -17,7 +18,8 @@ class GoalBlock extends GameObject {
     if (gm.room.getAliveEnemiesCount() == 0) {
       push();
       translate(pos.x, pos.y);
-      rect(0, 0, 50, 50);
+      imageMode(CENTER);
+      image(sprite, 0, 0, size.x, size.y);
       pop();
     }
   }
