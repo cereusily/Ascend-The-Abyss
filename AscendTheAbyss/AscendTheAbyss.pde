@@ -20,11 +20,17 @@ Player player;
 /* TODO LIST
  - Roommanager has check in drawall for enemies=> need to fix so enemies dont stack/overlaps
  - Add inventory display
+ - Add chest drops for room clear
+ - Added additional items to augment player ability (ricochet gun, shotguns, speed boost etc)
+ - Redo some sprites :(
  
- Difference from Assignment 3
- - Added moveable/explorable areas
- - Added different types of enemies with a variety of behaviour
- - Added items
+ Updates from Milestone 1
+ - Added additional items
+ - Added bosskeys!
+ - Added chest drops for keys
+ - Animated profile
+ - Very cool sprites that puts Picasso to shame
+ - New maps!
 */
 
 void setup() {

@@ -27,7 +27,7 @@ class Animation {
     if (frameCount % rate == 0) {
       frame = (frame+1) % imageCount;
     }
-
+    imageMode(CENTER);
     image(images[frame], xpos, ypos, size.x, size.y);
   }
 

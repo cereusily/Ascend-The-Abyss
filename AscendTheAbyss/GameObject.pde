@@ -48,8 +48,16 @@ class GameObject {
     // place holder
     push();
     translate(pos.x, pos.y);
-    ellipseMode(CENTER);
-    ellipse(0, 0, size.x, size.y);
+      // If a sprite exists, draw the sprite
+    if (sprite != null) {
+      imageMode(CENTER);
+      image(sprite, 0, 0, size.x, size.y);
+    }
+    else {
+      ellipseMode(CENTER);
+      fill(#FFFF00);
+      ellipse(0, 0, size.x, size.y);
+    }   
     pop();
   }
   

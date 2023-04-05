@@ -315,7 +315,7 @@ class GameManager {
   }
 
   void spawnGoal(PVector pos, PVector vel, int roomX, int roomY) {
-    GoalBlock newGoal = new GoalBlock(pos, vel, new PVector(50, 50), roomX, roomY);
+    GoalBlock newGoal = new GoalBlock(pos, vel, new PVector(100, 100), roomX, roomY);
     objectGroup.add(newGoal);
   }
 
@@ -540,15 +540,19 @@ class GameManager {
     if (key == CODED) {
       if (keyCode == UP) {
         moveUp = true;
+        player.frontWalk.display(player.pos.x, player.pos.y);
       }
       if (keyCode == DOWN) {
         moveDown = true;
+        player.frontWalk.display(player.pos.x, player.pos.y);
       }
       if (keyCode == LEFT) {
         moveLeft = true;
+        player.frontWalk.display(player.pos.x, player.pos.y);
       }
       if (keyCode == RIGHT) {
         moveRight = true;
+        player.frontWalk.display(player.pos.x, player.pos.y);
       }
       if (keyCode == SHIFT && player.switchCooldown == player.switchThreshold) {
         player.switchOmen();
@@ -605,4 +609,5 @@ class GameManager {
       player.gun.shoot(player.getOmen());
     }
   }
+
 }
