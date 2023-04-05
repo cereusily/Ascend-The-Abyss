@@ -53,6 +53,11 @@ class GameManager {
 
   // Settings: objects
   ArrayList<GameObject> objectGroup;  // for objects stored globally on map; room group for object stored locally in room
+  ArrayList<DarkCell> darkCells;
+  
+  int darkCellSize;
+  int darkCellX;
+  int darkCellY;
 
   GameManager() {
     // Managers
@@ -66,6 +71,12 @@ class GameManager {
     // All game objects
     objectGroup = new ArrayList<GameObject>();
     itemsList = new HashMap<String, Item>();
+    darkCells = new ArrayList<DarkCell>();
+    
+    darkCellSize = 5;
+    darkCellX = 0;
+    darkCellY = 0;
+    
 
     // Load images for sprites
     playerProfile = new Animation("sprites/gothie-profile/pixel-gothie_", 14, 6, new PVector(130, 130));
@@ -117,6 +128,7 @@ class GameManager {
     checkDoors();
     drawRoom();
     room.drawObjects();
+    updateDarkness();
 
     // UI
     drawHUD();
@@ -162,12 +174,13 @@ class GameManager {
         }
 
         if (r == ENEMY_ROOM) {
-          spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
-          spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
-          spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
-          spawnStalker(new PVector(width/2 - 100, height/2 + 150), new PVector(), j, i);
-          spawnStalker(new PVector(width/2 - 150, height/2), new PVector(), j, i);
-          spawnStalker(new PVector(width/2 - 100, height/2 - 150), new PVector(), j, i);
+          spawnBoss(new PVector(width/2, height/2), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2, height/2), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 - 100), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 + 150), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 150, height/2), new PVector(), j, i);
+          //spawnStalker(new PVector(width/2 - 100, height/2 - 150), new PVector(), j, i);
         }
         if (r == ELITE_ROOM) {
           spawnSummoner(new PVector(width/2 - 100, height/2 + 100), new PVector(), j, i);
@@ -242,6 +255,8 @@ class GameManager {
     fillLevel();
 
     // Gameobjects
+    createDarkness();
+    
     player = new Player(new PVector(width/2, height/2), new PVector(), new PVector(playerSize, playerSize), startRoomX, startRoomY);
     player.sprite = playerSprite;
     player.hasKey = false;
@@ -250,6 +265,14 @@ class GameManager {
 
     // Fills room
     fillRoom();
+  }
+  
+  void updateDarkness() {
+    for (int i = 0; i < darkCells.size(); i++) {
+      DarkCell d = darkCells.get(i);
+      d.update();
+      d.drawMe();
+    }
   }
 
   /*
@@ -279,6 +302,11 @@ class GameManager {
   void spawnChaser(PVector pos, PVector vel, int roomX, int roomY) {
     Chaser newChaser = new Chaser(pos, vel, new PVector(enemySize + 20, enemySize + 20), roomX, roomY);
     objectGroup.add(newChaser);
+  }
+  
+  void spawnBoss(PVector pos, PVector vel, int roomX, int roomY) {
+    Boss newBoss = new Boss(pos, vel, new PVector(enemySize + 40, enemySize + 40), roomX, roomY);
+    objectGroup.add(newBoss);
   }
 
   void spawnChest(PVector pos, PVector vel, int roomX, int roomY) {
@@ -312,6 +340,18 @@ class GameManager {
     bossKey.type = KEY;
     bossKey.sprite = bossKeySprite;
     return bossKey;
+  }
+  
+  void createDarkness() {
+    // Creates darkness cells
+    while (darkCellY < height) {
+      darkCells.add(new DarkCell(new PVector(darkCellX, darkCellY), darkCellSize));
+      darkCellX += darkCellSize;
+      if (darkCellX > width) {
+        darkCellX = 0;
+        darkCellY += darkCellSize;
+      }
+    }
   }
 
   void fillRoom() {

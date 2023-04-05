@@ -8,6 +8,9 @@ class Player extends GameObject {
   // Omen states
   int switchCooldown;
   int switchThreshold;
+  
+  // Lighting
+  float lightRadius;
 
   // States
   boolean isInvincible;
@@ -50,8 +53,11 @@ class Player extends GameObject {
     gun = new Pistol(this.pos, new PVector(), playerBullets);
 
     gun.isFriendly = true;
-    gun.power = 20;
+    gun.power = 10;
     gun.canRicochet = true;
+    
+    // Light radius
+    lightRadius = 500;
 
     // Inventory
     inventory = new ArrayList<Item>();
