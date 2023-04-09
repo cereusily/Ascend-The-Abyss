@@ -14,7 +14,6 @@ class Player extends GameObject {
 
   // States
   boolean isInvincible;
-  color flash = color(255);  // temp fill
 
   // I-frame timer
   Timer iTimer;
@@ -24,12 +23,14 @@ class Player extends GameObject {
   Gun gun;
   int knockback;
   ArrayList<Bullet> playerBullets;
-
-  // Inventory
-  ArrayList<Item> inventory;
+  int ricochetAmount;
   
   // Animated sprites
-  Animation frontWalk;
+  Animation idle;
+  Animation moveDown;
+  Animation moveUp;
+  Animation moveRight;
+  Animation moveLeft;
 
   // Has key
   boolean hasKey;
@@ -38,7 +39,7 @@ class Player extends GameObject {
     super(pos, vel, size, roomX, roomY);
 
     // Dampenings
-    acc = 5;
+    acc = 4;
     damp = 0.77;
     knockback = 10;
 
@@ -52,21 +53,22 @@ class Player extends GameObject {
     iTimer = new Timer();
     
     // Animations
-    frontWalk = new Animation("sprites/gothie-move-down/move-down-", 4, 10, size);
+    idle = new Animation("sprites/gothie-idle/idle-", 8, 8, new PVector(size.x + 30, size.y + 30));
+    moveDown = new Animation("sprites/gothie-move-down/move-down-", 4, 10, new PVector(size.x + 30, size.y + 30));
+    moveUp = new Animation("sprites/gothie-move-up/move-up-", 4, 10, new PVector(size.x + 30, size.y + 30));
+    moveRight = new Animation("sprites/gothie-move-right/move-right-", 4, 10, new PVector(size.x + 30, size.y + 30));
+    moveLeft = new Animation("sprites/gothie-move-left/move-left-", 4, 10, new PVector(size.x + 30, size.y + 30));
 
     // Gun + Bullets
     playerBullets = new ArrayList<Bullet>();
     gun = new Pistol(this.pos, new PVector(), playerBullets);
 
     gun.isFriendly = true;
-    gun.power = 10;
+    gun.power = 1;
     gun.canRicochet = true;
     
     // Light radius
-    lightRadius = 500;
-
-    // Inventory
-    inventory = new ArrayList<Item>();
+    lightRadius = 200;
 
     // Key
     hasKey = false;
@@ -87,6 +89,7 @@ class Player extends GameObject {
 
   void update() {
     // Dampens
+    //println(gm.room.getAliveEnemiesCount());
     vel.mult(damp);
 
     // Adjusts vector
@@ -96,7 +99,6 @@ class Player extends GameObject {
 
     // Calls update
     super.update();
-    frontWalk.display(player.pos.x, player.pos.y);
     updateBullets();
 
     // Checks switching cooldown
@@ -113,7 +115,7 @@ class Player extends GameObject {
 
     // See if player is alive
     if (health <= 0) {
-      mode = GAMEOVER;
+      gameMode = GAMEOVER;
     }
 
     // Checks exits
@@ -123,9 +125,17 @@ class Player extends GameObject {
   }
 
   void gotHit(int dmg) {
+    gm.screenShakeTimer = 20;
+    gm.screenShake = 10;
     player.iTimer.reset();
     player.isInvincible = true;
     player.decreaseHealth(dmg);
+  }
+  
+  void decreaseHealth(int dmg) {
+    // decreases health
+    gm.playSound(gm.playerHurtEffect);
+    this.health -= dmg;
   }
 
   void checkInvincible() {
@@ -244,17 +254,30 @@ class Player extends GameObject {
   }
 
   void drawMe() {
-    //// Draws in character => placeholder
-    //push();
-    //translate(pos.x, pos.y);
-    //ellipseMode(CENTER);
-    //fill(255, 182, 193);
-    //if (isInvincible) {
-    //  fill(flash);
-    //}
-    ////ellipse(0, 0, size.x, size.y);
-    //imageMode(CENTER);
-    //image(sprite, 0, 0, size.x + 10, size.y + size.y/2 + 10);
-    //pop();
+    push();
+    translate(pos.x, pos.y);
+    
+    if (isInvincible) {
+      noFill();
+      stroke(255);
+      ellipse(0, 0, size.x + 30, size.y + 30);
+    }
+    
+    if (gm.moveDown) {
+      moveDown.display(0, 0);
+    }
+    else if (gm.moveUp) {
+      moveUp.display(0, 0);
+    }
+    else if (gm.moveRight) {
+      moveRight.display(0, 0);
+    }
+    else if (gm.moveLeft) {
+      moveLeft.display(0, 0);
+    }
+    else {
+      idle.display(0, 0);  // idle animation
+    }
+    pop();
   }
 }

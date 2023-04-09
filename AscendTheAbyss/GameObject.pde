@@ -5,7 +5,7 @@ class GameObject {
   PVector pos, vel, size;
   PVector distance;
   PImage sprite;
-  int health, maxHealth, deathTimer;
+  int health, maxHealth, deathTimer, deathAnimationTime;
   float scaleFactor, rotateFactor;
 
   int power;
@@ -68,14 +68,6 @@ class GameObject {
   
   void resolveCollide() {
     // Calculates distance so no overlap
-    //distance = pos.sub(other.pos);
-    
-    ////  Calculates penetration depth of ellipse
-    //float penDepth = size.x/2 + other.size.x/2 - distance.mag();
-    //PVector penResolution = distance.normalize().mult(penDepth/2);
-    
-    //pos = pos.add(penResolution);
-    //other.pos = other.pos.add(penResolution.mult(-1));
     PVector knockback = vel.copy().normalize().mult(-10);
     pos.add(knockback);
   }
@@ -101,11 +93,15 @@ class GameObject {
   }
   
   void decreaseHealth(int dmg) {
+    gm.playSound(gm.hurtEffect);
     this.health -= dmg;
   }
   
   void removeSelf() {
     gm.objectGroup.remove(this);
     gm.room.group.remove(this);
+  }
+  
+  void separate(GameObject obj) {
   }
 }

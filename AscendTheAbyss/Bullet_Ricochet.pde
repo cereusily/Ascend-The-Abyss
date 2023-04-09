@@ -1,5 +1,5 @@
 class RicochetBullet extends Bullet {
-  // Fields
+  // Class that manages special bullet that can ricochet
   int bounceCount;
   int bounceMax = 1;
 

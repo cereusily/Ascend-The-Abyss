@@ -1,4 +1,5 @@
 class Bloom extends Gun {
+  // Class that manages bloom gun
   // Init fields
   
   Bloom(PVector pos, PVector vel, ArrayList<Bullet> arr) {

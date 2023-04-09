@@ -1,5 +1,5 @@
 class Chaser extends Enemy {
-  
+  // Class that manages enemy that charges + chases
   final int TRACK = 0;
   final int CHARGE = 1;
   int chaserState;
@@ -22,7 +22,9 @@ class Chaser extends Enemy {
     chargeSpeed = 10;
     charging = false;
     
-    sprite = loadImage("sprites/chaser.png");
+    sprite = loadImage("sprites/enemies/chaser/chaser-000.png");
+    
+    walk = new Animation("sprites/enemies/chaser/chaser-", 8, 4, size);
 
     chaserState = TRACK;
   }
@@ -50,7 +52,7 @@ class Chaser extends Enemy {
     push();
     translate(pos.x, pos.y);
     imageMode(CENTER);
-    image(sprite, 0, 0, size.x, size.y); 
+    walk.display(0, 0);
     pop();
   }
   

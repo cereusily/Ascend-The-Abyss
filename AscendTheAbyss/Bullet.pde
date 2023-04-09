@@ -1,5 +1,5 @@
 class Bullet extends GameObject {
-  // Fields
+  // Class that manages bullets
   color bulletInnerColour;
   color bulletOuterColour;
   ArrayList<Bullet> arr;

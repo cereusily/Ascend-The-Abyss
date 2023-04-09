@@ -1,4 +1,5 @@
 class Pistol extends Gun {
+  // Class that manages standard pistol gun
   // Init fields
   
   Pistol(PVector pos, PVector vel, ArrayList<Bullet> arr) {
@@ -9,7 +10,7 @@ class Pistol extends Gun {
     
     speed = 10;
     
-    threshold = 40;
+    threshold = 65;
     cooldown = 25;
   }
 
@@ -23,9 +24,10 @@ class Pistol extends Gun {
       aimVector.setMag(speed);
       
       if (canRicochet) {  // Ricochet bullet
-        Bullet newBullet = new RicochetBullet(new PVector(pos.x, pos.y), aimVector, size, arr);
+        RicochetBullet newBullet = new RicochetBullet(new PVector(pos.x, pos.y), aimVector, size, arr);
         newBullet.isFriendly = isFriendly;
         newBullet.setOmen(omen);
+        newBullet.bounceMax = ricochetAmount;
         arr.add(newBullet);
       }
       else {  // Regular bullet

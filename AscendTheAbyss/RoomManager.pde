@@ -1,4 +1,5 @@
 class RoomManager {
+  // Class that manages the local room
   // Fields
  
   ArrayList<GameObject> group;
@@ -33,7 +34,7 @@ class RoomManager {
 
     for (int i = 0; i < group.size(); i++) {
       GameObject obj = group.get(i);
-      if (obj instanceof Enemy) {
+      if (obj instanceof Enemy && !(obj instanceof Chest)) {
         count++;
       }
     }
@@ -48,8 +49,17 @@ class RoomManager {
       
       // Only updates and draws if same room as player
       if (obj.roomX == player.roomX && obj.roomY == player.roomY) {  // Only runs for loop for enemies
+        
+        if (obj instanceof Enemy) {
+          for (int j = i + 1; j < group.size(); j++) {
+            GameObject obj2 = group.get(j);
+            obj.separate(obj2);
+          }
+      
+        }
         obj.update();
         obj.drawMe();
+        
       }
     }
   }

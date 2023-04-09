@@ -1,5 +1,5 @@
 class Summoner extends Enemy {
-  // Class that manages a summoner enemy
+  // Class that manages a summoner enemy that can summon shit
   
   int summonMax;
   
@@ -15,7 +15,7 @@ class Summoner extends Enemy {
     health = 10;
     
     // sprite
-    sprite = loadImage("sprites/summoner.png");
+    sprite = loadImage("sprites/enemies/summoner.png");
     
     // Sets threshold for summoning
     summonMax = 6;

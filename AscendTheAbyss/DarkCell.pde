@@ -25,6 +25,7 @@ class DarkCell {
     
     opacity = 255 - opacity;
     
+    // Accounts for bullets
     for (int i = 0; i < player.playerBullets.size(); i++) {
       Bullet b = player.playerBullets.get(i);
       

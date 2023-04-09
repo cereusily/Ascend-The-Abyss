@@ -1,4 +1,5 @@
 abstract class Gun {
+  // Class that manages guns
   // Init fields
   
   float cooldown;
@@ -9,7 +10,7 @@ abstract class Gun {
   
   boolean isFriendly;
   boolean canRicochet;
-  
+  int ricochetAmount;
   
   float speed; 
   int power;
@@ -22,6 +23,7 @@ abstract class Gun {
     // Default bullet size & power
     this.size = new PVector(15, 15);
     this.power = 1;
+    this.ricochetAmount = 1;
   }
 
   void shoot(String omen) {
@@ -32,7 +34,6 @@ abstract class Gun {
       newBullet.isFriendly = isFriendly;
       newBullet.setOmen(omen);
       arr.add(newBullet);
-      //gm.room.addToRoom(newBullet);
     }
   }
   
